@@ -2,9 +2,6 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/userModel.js';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { username, email, password } = req.body;
@@ -32,7 +29,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, { expiresIn: '2h' });
+    const secret = process.env.JWT_SECRET || 'pwf_2026';
+    const token = jwt.sign({ id: user.id }, secret, { expiresIn: '2h' });
     res.status(200).json({ success: true, message: 'Login berhasil!', token });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error server.' });
